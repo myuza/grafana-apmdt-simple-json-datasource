@@ -7,6 +7,7 @@ exports.GenericDatasource = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+const { add } = require('lodash');
 var _lodash = require('lodash');
 
 var _lodash2 = _interopRequireDefault(_lodash);
@@ -54,6 +55,15 @@ var GenericDatasource = exports.GenericDatasource = function () {
         url: this.url + '/query',
         data: query,
         method: 'POST'
+      }).then(function (response) {
+        //console.log('QUERY',response.data,response);
+        if (typeof response.data === 'string'){
+          let str=response.data.toString().replace('data:'.toString(),''.toString());
+          let data = JSON.parse(JSON.parse(JSON.stringify(str)));
+          response.data=data;
+          //console.log('QUERY 2',response.data);
+        }					
+        return response;
       });
     }
   }, {
@@ -116,7 +126,7 @@ var GenericDatasource = exports.GenericDatasource = function () {
         url: this.url + '/search/source',
         data: interpolated,
         method: 'POST'
-      }).then(this.mapToTextValue);
+      }).then(this.mapToTextValueSource);
     }
   }, {
     key: 'metricFindApps',
@@ -127,19 +137,6 @@ var GenericDatasource = exports.GenericDatasource = function () {
 
       return this.doRequest({
         url: this.url + '/search/apps',
-        data: interpolated,
-        method: 'POST'
-      }).then(this.mapToTextValue);
-    }
-  }, {
-    key: 'metricFindTarget',
-    value: function metricFindTarget(query) {
-      var interpolated = {
-        target: this.templateSrv.replace(query, null, 'regex')
-      };
-
-      return this.doRequest({
-        url: this.url + '/search/target',
         data: interpolated,
         method: 'POST'
       }).then(this.mapToTextValue);
@@ -168,6 +165,23 @@ var GenericDatasource = exports.GenericDatasource = function () {
         }
         return { text: d, value: d };
       });
+    }
+  }, {
+    key: 'mapToTextValueSource',
+    value: function mapToTextValueSource(result) {
+      // console.log(result.data);
+      var list = []
+      list.push({ text: "[hostname]", value: "[hostname]" });
+      // add.result.data  { text: "[hostname]", value: "[hostname]" };
+      list = _lodash2.default.map(result.data, function (d, i) {
+        if (d && d.text && d.value) {
+          return { text: d.text, value: d.value };
+        } else if (_lodash2.default.isObject(d)) {
+          return { text: d, value: i };
+        }
+        return { text: d, value: d };
+      });
+      return list;
     }
   }, {
     key: 'doRequest',

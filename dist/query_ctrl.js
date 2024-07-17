@@ -30,10 +30,10 @@ var GenericDatasourceQueryCtrl = exports.GenericDatasourceQueryCtrl = function (
     // _this.target.type = _this.target.type || 'timeserie';
     // return _this;
     _this.scope = $scope;
-    _this.target.metric = _this.target.metric || 'select metric';
     _this.target.apps = _this.target.apps || 'select apps';
     _this.target.source = _this.target.source || 'select source';
-    _this.target.target = _this.target.target || 'select target';
+    _this.target.metric = _this.target.metric || 'select metric';
+    // _this.target.target = _this.target.target || 'select target';
     _this.target.legend = _this.target.legend || 'select legend';
     //_this.target.result = 'halo';
     _this.target.type = _this.target.type || 'timeserie';
@@ -44,7 +44,7 @@ var GenericDatasourceQueryCtrl = exports.GenericDatasourceQueryCtrl = function (
     key: 'getOptions',
     value: function getOptions(query) {
       // return this.datasource.metricFindQuery(query || '');
-      query = query+'|'+this.target.apps+'|'+this.target.source+'|'+this.target.target;
+      query = query+'|'+this.target.apps+'|'+this.target.source;
       return this.datasource.metricFindMetric(query || '');
     }
   }, {
@@ -55,25 +55,25 @@ var GenericDatasourceQueryCtrl = exports.GenericDatasourceQueryCtrl = function (
   }, {
     key: 'getOptionsApps',
     value: function getOptions(query) {
-      query = this.target.metric+'|'+query+'|'+this.target.source+'|'+this.target.target+"|"+this.target.legend;
+      query = this.target.metric+'|'+query+'|'+this.target.source+'|'+this.target.legend;
       return this.datasource.metricFindApps(query || '');
     }
   }, {
     key: 'getOptionsSource',
     value: function getOptions(query) {
-      query = this.target.metric+'|'+this.target.apps+'|'+query+'|'+this.target.target+"|"+this.target.legend;
+      query = this.target.metric+'|'+this.target.apps+'|'+query+'|'+this.target.legend;
       return this.datasource.metricFindSource(query || '');
     }
   }, {
-    key: 'getOptionsTarget',
+    key: 'getOptionsMetric',
     value: function getOptions(query) {
-      query = this.target.metric+'|'+this.target.apps+'|'+this.target.source+'|'+query+"|"+this.target.legend;
-      return this.datasource.metricFindTarget(query || '');
+      query = query+'|'+this.target.apps+'|'+this.target.source+'|'+this.target.legend;
+      return this.datasource.metricFindMetric(query || '');
     }
   }, {
     key: 'getOptionsLegend',
     value: function getOptions(query) {
-      query = this.target.metric+'|'+this.target.apps+'|'+this.target.source+'|'+this.target.target+"|"+query;
+      query = this.target.metric+'|'+this.target.apps+'|'+this.target.source+'|'+query;
       return this.datasource.metricFindLegend(query || '');
     }
   }, {
